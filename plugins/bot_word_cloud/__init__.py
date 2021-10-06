@@ -5,6 +5,7 @@ import os
 import queue
 import re
 import time
+import threading
 
 import imageio
 import jieba
@@ -92,6 +93,8 @@ def schedule_task():
 def do_task():
     while True:
         group = task_queue.get()
+        if not group:
+            return
         try:
             logger.info("群: {} | 分析处理中... | 剩余任务数量 {}".format(group, task_queue.qsize()))
             start_time = float(time.time())
@@ -207,3 +210,12 @@ def check_schedule():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+
+schedule.every().day.at('11:00').do(schedule_task)
+schedule.every().day.at('18:00').do(schedule_task)
+schedule.every().day.at('23:30').do(schedule_task)
+schedule.every().day.at('23:59').do(flush_redis)
+
+threading.Thread(target=do_task).start()
+threading.Thread(target=check_schedule).start()
