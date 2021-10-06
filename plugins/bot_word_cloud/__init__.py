@@ -1,3 +1,4 @@
+# 移植于https://github.com/devourbots/word_cloud_bot
 import base64
 import io
 import os
@@ -196,4 +197,3 @@ def check_schedule():
     while True:
         schedule.run_pending()
         time.sleep(1)
-
