@@ -18,11 +18,14 @@ __doc__ = "定时向群发送词云,当日话题统计,当日发言统计"
 from botoy.decorators import ignore_botself, these_msgtypes
 from jieba import posseg
 from wordcloud import wordcloud
+from botoy.config import jconfig
 
 import connector
 
-task_queue = queue.Queue()
+# allow word cloud groups
+ALLOW_GROUPS = jconfig.word_cloud_white_group_list or []
 
+task_queue = queue.Queue()
 
 def receive_friend_msg(ctx: FriendMsg):
     Action(ctx.CurrentQQ)
@@ -31,11 +34,18 @@ def receive_friend_msg(ctx: FriendMsg):
 @ignore_botself
 @these_msgtypes(MsgTypes.TextMsg)
 def receive_group_msg(ctx: GroupMsg):
+
+    # only allow config groups use word cloud
+    chat_id = ctx.FromGroupId
+    global ALLOW_GROUPS
+    if chat_id not in ALLOW_GROUPS:
+        return
+
     try:
         r = connector.get_connection()
         text = ctx.Content
         user_id = ctx.FromUserId
-        chat_id = ctx.FromGroupId
+
         username = ctx.FromNickName
         logger.info(f"内容{text[:10]} QQ: {str(user_id)} 昵称: {str(username)} 群号码: {str(chat_id)}")
         if "/" in text:

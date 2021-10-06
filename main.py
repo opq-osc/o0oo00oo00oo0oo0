@@ -2,11 +2,10 @@ import threading
 
 import schedule
 from botoy import Botoy
-from botoy import jconfig
 
 from plugins.bot_word_cloud import schedule_task, do_task, check_schedule, flush_redis
 
-bot = Botoy(qq=jconfig.qq, use_plugins=True)
+bot = Botoy(use_plugins=True)
 
 schedule.every().day.at('11:00').do(schedule_task)
 schedule.every().day.at('18:00').do(schedule_task)
