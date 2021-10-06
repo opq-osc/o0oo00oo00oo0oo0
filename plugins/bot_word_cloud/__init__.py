@@ -6,6 +6,7 @@ import queue
 import re
 import time
 import threading
+import random
 
 import imageio
 import jieba
@@ -166,6 +167,7 @@ def generate(group):
                 user_amount,
                 total_message_amount,
                 hot_word_string))
+            time.sleep(random.randint(1,9))
 
     else:
         logger.info("当前聊天数据量过小，嗨起来吧~")
@@ -186,6 +188,7 @@ def generate(group):
             time.strftime("%Y年%m月%d日", time.localtime()),
             time.strftime("%H:%M", time.localtime()),
             top_5_user))
+        time.sleep(random.randint(1,9))
     else:
         logger.info("当前聊天数据量过小，嗨起来吧~")
 
@@ -196,6 +199,7 @@ def generate(group):
         img = w.to_image()
         img.save(buffer, format='JPEG')
         Action(jconfig.qq).sendGroupPic(group=int(group), picBase64Buf=base64.b64encode(buffer.getvalue()).decode())
+        time.sleep(random.randint(1,9))
     except Exception as e:
         logger.error("词云图片生成失败", e)
 
